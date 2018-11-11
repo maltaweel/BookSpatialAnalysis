@@ -1,4 +1,6 @@
 '''
+Analysis to look at all possible areas traversed based on road segments and starting points within road segments.
+
 Created on Nov 7, 2018
 
 @author: mark
@@ -6,12 +8,10 @@ Created on Nov 7, 2018
 import pysal
 import os
 import math
-import graph
 import matplotlib.pyplot as plt
 import networkx as nx
-
+import graph
 import csv
-
 
 oldNodes={}
 nodes={}
@@ -19,18 +19,20 @@ links=[]
 nodesS=[]
 linkz={}
 
-def load():
+'''
+Load the data and creating the links for the network from street segment file.
+@param fileName the shapefile name to assess.
+'''
+def load(fileName):
     pn=os.path.abspath(__file__)
     pn=pn.split("src")[0]
         
     #The data file path is now created where the data folder and dataFile.csv is referenced
     path=os.path.join(pn,'data')
         
-    filename=path+'/'+'Dura_street_segments.shp'
+    filename=path+'/'+fileName
 
     shp = pysal.open(filename)
-    
-    shape=shp
     
     node1=0
     node2=0
@@ -81,7 +83,10 @@ def load():
     
     return G
     
-    
+'''
+Applying the shortest path algorithm from each point of the road segments
+@param G the road network
+'''
 def runLinks(G):
     
     nodes=G.nodes
@@ -108,7 +113,11 @@ def runLinks(G):
     return edgesS
         
     
-   
+'''
+Printing the output based on edges traversed from the network and the network.
+@param edgesS is segments traversed
+@param G the road network
+''' 
 def output(edgesS,G):
 #   pos = nx.spring_layout(G)
     pn=os.path.abspath(__file__)
@@ -142,7 +151,11 @@ def output(edgesS,G):
         
     return G
         
-
+'''
+Method for checking to see if the nodes already part of the road network
+@param node the node to check
+@param the container for the nodes to check from.
+'''
 def inNodes(node, nodes):
     iNodes=False
     if node[0] in nodes:
@@ -152,6 +165,10 @@ def inNodes(node, nodes):
                 
     return iNodes
 
-G=load()
+'''
+Method to call and run the analysis.
+'''
+fileName='Dura_street_segments.shp'
+G=load(fileName)
 edgesS=runLinks(G)
 output(edgesS,G)
